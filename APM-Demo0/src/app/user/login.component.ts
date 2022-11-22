@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { AuthService } from './auth.service';
 
@@ -13,10 +14,21 @@ export class LoginComponent implements OnInit {
 
   maskUserName: boolean;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService,
+    private router: Router,
+    private store: Store<any>,
+    private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-
+    this.store.select('users').subscribe(
+      state => {
+        console.dir(state);
+        if (state) {
+          this.maskUserName = state.maskUserName;
+          this.cd.detectChanges();
+        }
+      }
+    )
   }
 
   cancel(): void {
@@ -24,7 +36,7 @@ export class LoginComponent implements OnInit {
   }
 
   checkChanged(): void {
-    this.maskUserName = !this.maskUserName;
+    this.store.dispatch({type: '[User] Mask User Name'});
   }
 
   login(loginForm: NgForm): void {

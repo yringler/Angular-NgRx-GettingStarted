@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { AuthService } from './auth.service';
+import { getMaskUserName } from './state/user.reducer';
 
 @Component({
   templateUrl: './login.component.html',
@@ -20,14 +21,8 @@ export class LoginComponent implements OnInit {
     private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.store.select('users').subscribe(
-      state => {
-        console.dir(state);
-        if (state) {
-          this.maskUserName = state.maskUserName;
-          this.cd.detectChanges();
-        }
-      }
+    this.store.select(getMaskUserName).subscribe(
+      maskUserName => this.maskUserName = maskUserName
     )
   }
 

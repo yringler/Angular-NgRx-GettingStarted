@@ -21,6 +21,7 @@ export const loadProductSuccess = createAction(
     props<{products: Product[]}>()
 );
 
+// Not used, because the concept is pretty simple. Can't be bothered.
 export const loadProductFailure = createAction(
     '[Product] Load Fail',
     props<{ error: string }>());

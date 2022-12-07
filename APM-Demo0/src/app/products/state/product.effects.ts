@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { map, mergeMap } from "rxjs/operators";
+import { of } from "rxjs";
+import { catchError, concatMap, map, mergeMap } from "rxjs/operators";
 import { ProductService } from "../product.service";
 import * as ProductActions from './product.actions';
 
@@ -13,5 +14,12 @@ export class ProductEffects {
         ofType(ProductActions.loadProducts),
         mergeMap(() => this.productService.getProducts()),
         map(products => ProductActions.loadProductSuccess({products}))
-    ))
+    ));
+
+    updateProducts$ = createEffect(() => this.actions$.pipe(
+        ofType(ProductActions.updateProduct),
+        concatMap((product) => this.productService.updateProduct(product.product)),
+        map(newProduct => ProductActions.updateProductSuccess({product: newProduct})),
+        catchError(error => of(ProductActions.updateProductError({error: error})))
+    ));
 }

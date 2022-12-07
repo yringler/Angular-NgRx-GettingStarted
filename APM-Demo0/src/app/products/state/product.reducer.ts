@@ -8,14 +8,15 @@ export interface State extends AppState.State {
 }
 
 export interface ProductState {
-    showProductCode: boolean;
-    currentProduct: Product,
-    products: Product[]
+    showProductCode: boolean,
+    currentProductId: number | null,
+    products: Product[],
+    error: string
 }
 
 const initialState = <ProductState>{
     showProductCode: true,
-    currentProduct: null,
+    currentProductId: 0,
     products: []
 }
 
@@ -25,10 +26,24 @@ export const getShowProductCode = createSelector(
     getProductFeatureState,
     state => state.showProductCode);
 
+export const getCurrentProductId = createSelector(getProductFeatureState, state => state.currentProductId);
+
 export const getCurrentProduct = createSelector(
     getProductFeatureState,
-    state => state.currentProduct
-);
+    getCurrentProductId,
+    (state, id) => {
+        if (id !== 0) {
+            return id ? state.products.find(product => product.id == state.currentProductId) : null;
+        }
+
+        return {
+            id: 0,
+            productName: '',
+            productCode: 'New',
+            description: '',
+            starRating: 0
+        };
+    });
 
 export const getProdcuts = createSelector(
     getProductFeatureState,
@@ -45,31 +60,39 @@ export const productReducer = createReducer<ProductState>(
     on(ProdcuctActions.setCurrentProduct, (state, change) => {
         return {
             ...state,
-            currentProduct: change.product
+            currentProductId: change.currentProductId
         }
     }),
     on(ProdcuctActions.clearCurrentProduct, state => {
         return {
             ...state,
-            currentProduct: null
+            currentProductId: null
         }
     }),
     on(ProdcuctActions.initializeCurrentProduct, (state): ProductState => {
         return {
             ...state,
-            currentProduct: {
-                description: '',
-                id: 0,
-                productCode: 'New',
-                starRating: 0,
-                productName: ''
-            }
+            currentProductId: 0
         }
     }),
     on(ProdcuctActions.loadProductSuccess, (state, action): ProductState => {
         return {
             ...state,
             products: action.products
+        }
+    }),
+    on(ProdcuctActions.updateProductSuccess, (state, action): ProductState => {
+        const products = state.products.map(product => product.id == action.product.id ? action.product : product);
+        return {
+            ...state,
+            products,
+            error: ''
+        }
+    }),
+    on(ProdcuctActions.updateProductError, (state, action) => {
+        return {
+            ...state,
+            error: action.error
         }
     })
 );

@@ -31,3 +31,11 @@ export const updateProduct = createAction('[Product] Update', props<{product: Pr
 export const updateProductSuccess = createAction('[Product] Update Success', props<{product: Product}>());
 
 export const updateProductError = createAction('[Product] Update Error', props<{error: string}>());
+
+export const deleteProduct = createAction('[Product] Delete', props<{productId: number}>());
+
+export const deleteProductSuccess = createAction('[Product] Delete Success', props<{productId: number}>());
+
+export const createProduct = createAction('[Product] Create', props<{product: Product}>());
+
+export const createProductSuccess = createAction('[Product] Create Success', props<{product: Product}>());

@@ -22,4 +22,16 @@ export class ProductEffects {
         map(newProduct => ProductActions.updateProductSuccess({product: newProduct})),
         catchError(error => of(ProductActions.updateProductError({error: error})))
     ));
+
+    createProduct$ = createEffect(() => this.actions$.pipe(
+        ofType(ProductActions.createProduct),
+        concatMap(product => this.productService.createProduct(product.product)),
+        map(newProduct => ProductActions.createProductSuccess({product: newProduct}))
+    ));
+
+    deleteProduct$ = createEffect(() => this.actions$.pipe(
+        ofType(ProductActions.deleteProduct),
+        concatMap(product => this.productService.deleteProduct(product.productId).pipe(
+            map(() => ProductActions.deleteProductSuccess({productId: product.productId})
+    )))));
 }
